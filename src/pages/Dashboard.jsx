@@ -87,21 +87,40 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-tr from-blue-50 via-blue-100 to-blue-200 p-8 flex flex-col">
       {/* Dashboard Header */}
-      <header className="bg-white shadow rounded-md p-4 flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 className="text-2xl font-bold text-blue-600 mb-4 md:mb-0">Welcome, {user?.name}</h1>
+      <header className="bg-white shadow-md rounded-xl p-6 flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <h1 className="text-3xl font-extrabold text-blue-700 mb-4 md:mb-0">
+          Welcome, <span className="text-blue-600">{user?.name}</span>
+        </h1>
+        <button
+          onClick={() => {
+            localStorage.removeItem('loggedInUser');
+            navigate('/login');
+          }}
+          className="text-sm md:text-base bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition shadow-md"
+          aria-label="Logout"
+        >
+          Logout
+        </button>
       </header>
 
       {/* Navigation Tabs */}
-      <nav className="bg-white rounded-md shadow flex mb-6 overflow-hidden">
+      <nav className="bg-white rounded-xl shadow-md flex mb-8 overflow-hidden w-1/2 mx-auto">
         {['stats', 'search', 'profile'].map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-3 text-center font-semibold transition-colors ${
-              activeTab === tab ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-100'
+            onClick={() => {
+              setActiveTab(tab);
+              setIsEditing(false);
+              setIsChangingPassword(false);
+            }}
+            className={`flex-1 py-4 text-center font-semibold transition-colors duration-300 focus:outline-none ${
+              activeTab === tab
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'text-blue-700 hover:bg-blue-100'
             }`}
+            aria-current={activeTab === tab ? 'page' : undefined}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -109,19 +128,23 @@ const Dashboard = () => {
       </nav>
 
       {/* Content Area */}
-      <section className="bg-white rounded-md shadow p-6 flex-grow flex items-center justify-center">
+      <section className="bg-white rounded-xl shadow-md p-8 max-w-6xl mx-auto w-full flex-grow">
         {activeTab === 'stats' && (
           <div>
-            <h2 className="text-xl font-bold mb-4">Stats</h2>
-            <p>You can track your job application progress here.</p>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-100 p-4 rounded-md text-center">
-                <p className="text-lg font-bold">{appliedJobs.length}</p>
-                <p>Applications Sent</p>
+            <h2 className="text-2xl font-bold mb-6 text-blue-800">Application Stats</h2>
+            <p className="text-gray-700 mb-6">
+              Track your job application progress here. Stay motivated and organized!
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-blue-100 p-6 rounded-xl text-center shadow-sm transition transform hover:scale-[1.02]">
+                <p className="text-4xl font-extrabold text-blue-700">{appliedJobs.length}</p>
+                <p className="text-blue-800 mt-2 font-semibold">Applications Sent</p>
               </div>
-              <div className="bg-purple-100 p-4 rounded-md text-center">
-                <p className="text-lg font-bold">{appliedJobs.length > 0 ? 'Active' : 'None'}</p>
-                <p>Applications Status</p>
+              <div className="bg-purple-100 p-6 rounded-xl text-center shadow-sm transition transform hover:scale-[1.02]">
+                <p className="text-4xl font-extrabold text-purple-700">
+                  {appliedJobs.length > 0 ? 'Active' : 'None'}
+                </p>
+                <p className="text-purple-800 mt-2 font-semibold">Applications Status</p>
               </div>
             </div>
           </div>
@@ -130,132 +153,129 @@ const Dashboard = () => {
         {activeTab === 'search' && <JobSearch />}
 
         {activeTab === 'profile' && user && (
-          <div className="w-full max-w-md">
-            <h2 className="text-xl font-bold mb-6 text-center">Profile</h2>
+          <div className="max-w-md mx-auto">
+            <h2 className="text-2xl font-bold mb-8 text-center text-blue-700">Your Profile</h2>
 
-            {/* Show name edit only if NOT changing password */}
-            {!isChangingPassword && (
+            {/* Profile View */}
+            {!isChangingPassword && !isEditing && (
               <>
-                {!isEditing ? (
-                  <>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-gray-600 text-sm font-semibold mb-1">Name:</label>
-                        <input
-                          type="text"
-                          value={user.name}
-                          readOnly
-                          className="w-full px-4 py-2 border rounded-md bg-gray-100 cursor-not-allowed"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-600 text-sm font-semibold mb-1">Email:</label>
-                        <input
-                          type="email"
-                          value={user.email}
-                          readOnly
-                          className="w-full px-4 py-2 border rounded-md bg-gray-100 cursor-not-allowed"
-                        />
-                      </div>
-                    </div>
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-gray-600 text-sm font-semibold mb-2">Name:</label>
+                    <input
+                      type="text"
+                      value={user.name}
+                      readOnly
+                      className="w-full px-5 py-3 border rounded-lg bg-gray-100 cursor-not-allowed text-gray-700"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-600 text-sm font-semibold mb-2">Email:</label>
+                    <input
+                      type="email"
+                      value={user.email}
+                      readOnly
+                      className="w-full px-5 py-3 border rounded-lg bg-gray-100 cursor-not-allowed text-gray-700"
+                    />
+                  </div>
+                </div>
 
-                    <div className="mt-6 flex space-x-4 justify-center">
-                      <button
-                        onClick={() => setIsEditing(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md transition"
-                      >
-                        Edit Name
-                      </button>
-                      <button
-                        onClick={() => setIsChangingPassword(true)}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-md transition"
-                      >
-                        Change Password
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-gray-600 text-sm font-semibold mb-1">Name:</label>
-                        <input
-                          type="text"
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          autoFocus
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-6 flex space-x-4 justify-center">
-                      <button
-                        onClick={handleSaveProfile}
-                        className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md transition"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 rounded-md transition"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </>
-                )}
+                <div className="mt-8 flex justify-center space-x-6">
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
+                  >
+                    Edit Name
+                  </button>
+                  <button
+                    onClick={() => setIsChangingPassword(true)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
+                  >
+                    Change Password
+                  </button>
+                </div>
               </>
             )}
 
-            {/* Show password change ONLY if isChangingPassword is true */}
+            {/* Edit Name */}
+            {!isChangingPassword && isEditing && (
+              <>
+                <div>
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">Edit Name:</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-blue-400 text-gray-800"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="mt-8 flex justify-center space-x-6">
+                  <button
+                    onClick={handleSaveProfile}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className="bg-gray-400 hover:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Change Password */}
             {isChangingPassword && (
-              <div className="p-6 border rounded-md bg-gray-50 shadow-inner">
-                <h3 className="text-lg font-semibold mb-4 text-center">Change Password</h3>
-                <div className="space-y-4">
+              <div className="p-6 border rounded-xl bg-yellow-50 shadow-inner max-w-md mx-auto">
+                <h3 className="text-xl font-semibold mb-6 text-center text-yellow-700">Change Password</h3>
+                <div className="space-y-5">
                   <div>
-                    <label className="block text-gray-700 text-sm mb-1">Current Password:</label>
+                    <label className="block text-yellow-800 text-sm mb-1 font-medium">Current Password:</label>
                     <input
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-yellow-400 text-yellow-900"
                       autoComplete="current-password"
                       autoFocus
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-700 text-sm mb-1">New Password:</label>
+                    <label className="block text-yellow-800 text-sm mb-1 font-medium">New Password:</label>
                     <input
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-yellow-400 text-yellow-900"
                       autoComplete="new-password"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-700 text-sm mb-1">Confirm New Password:</label>
+                    <label className="block text-yellow-800 text-sm mb-1 font-medium">Confirm New Password:</label>
                     <input
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-yellow-400 text-yellow-900"
                       autoComplete="new-password"
                     />
                   </div>
                 </div>
 
-                <div className="mt-6 flex space-x-4 justify-center">
+                <div className="mt-8 flex justify-center space-x-6">
                   <button
                     onClick={handleChangePassword}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-md transition"
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
                   >
                     Update Password
                   </button>
                   <button
                     onClick={handleCancelPasswordChange}
-                    className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 rounded-md transition"
+                    className="bg-gray-400 hover:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
                   >
                     Cancel
                   </button>

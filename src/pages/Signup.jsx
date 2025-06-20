@@ -45,28 +45,67 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-green-600 mb-6">Create an Account</h2>
-        <form onSubmit={handleSignup} className="space-y-4">
-          <input name="name" required placeholder="Name" value={formData.name} onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500" />
-          <input name="email" type="email" required placeholder="Email" value={formData.email} onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500" />
-          <input name="password" type="password" required placeholder="Password" value={formData.password} onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500" />
-          <input name="confirmPassword" type="password" required placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500" />
-          <button type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition duration-300">
+    <div
+      className="h-[83vh] flex items-center justify-center px-4"
+      style={{
+        background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
+      }}
+    >
+      <div className="bg-white bg-opacity-95 backdrop-blur-sm shadow-2xl rounded-xl p-10 max-w-md w-full">
+        <h2 className="text-3xl font-extrabold text-center text-green-700 mb-8">
+          Create an Account
+        </h2>
+        <form onSubmit={handleSignup} className="space-y-6">
+          <input
+            name="name"
+            required
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-green-400 transition"
+          />
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-green-400 transition"
+          />
+          <input
+            name="password"
+            type="password"
+            required
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-green-400 transition"
+          />
+          <input
+            name="confirmPassword"
+            type="password"
+            required
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-green-400 transition"
+          />
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-lg transition duration-300"
+          >
             Sign Up
           </button>
         </form>
-        <p className="mt-4 text-sm text-center text-gray-600">
-          Already have an account?{' '}
-          <button onClick={() => navigate('/login')} className="text-green-600 hover:underline">
-            Log in
-          </button>
+        <p className="mt-6 text-center text-black text-sm">
+        Already have an account?{' '}
+        <button
+          onClick={() => navigate('/login')}
+          className="text-green-300 hover:underline font-medium"
+        >
+          Log in
+        </button>
         </p>
       </div>
     </div>
