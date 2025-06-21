@@ -3,90 +3,135 @@
     "id": 1,
     "title": "Frontend Developer",
     "company": "TechCorp",
-    "location": "Remote"
+    "location": "Remote",
+    "salary": "₹6,00,000 - ₹10,00,000",
+    "type": "Full-Time",
+    "mode": "Remote"
   },
   {
     "id": 2,
     "title": "Backend Engineer",
     "company": "DevSolutions",
-    "location": "New York"
+    "location": "New York",
+    "salary": "₹8,00,000 - ₹12,00,000",
+    "type": "Full-Time",
+    "mode": "In-office"
   },
   {
     "id": 3,
     "title": "Full Stack Developer",
     "company": "CodeWorks",
-    "location": "San Francisco"
+    "location": "San Francisco",
+    "salary": "₹9,00,000 - ₹14,00,000",
+    "type": "Full-Time",
+    "mode": "Hybrid"
   },
   {
     "id": 4,
     "title": "Data Scientist",
     "company": "Data Insights",
-    "location": "Boston"
+    "location": "Boston",
+    "salary": "₹10,00,000 - ₹18,00,000",
+    "type": "Full-Time",
+    "mode": "In-office"
   },
   {
     "id": 5,
     "title": "Product Manager",
     "company": "InnovateX",
-    "location": "Austin"
+    "location": "Austin",
+    "salary": "₹15,00,000 - ₹22,00,000",
+    "type": "Full-Time",
+    "mode": "Hybrid"
   },
   {
     "id": 6,
     "title": "UX/UI Designer",
     "company": "Creative Minds",
-    "location": "Seattle"
+    "location": "Seattle",
+    "salary": "₹5,00,000 - ₹9,00,000",
+    "type": "Part-Time",
+    "mode": "Remote"
   },
   {
     "id": 7,
     "title": "DevOps Engineer",
     "company": "CloudNet",
-    "location": "Denver"
+    "location": "Denver",
+    "salary": "₹10,00,000 - ₹16,00,000",
+    "type": "Full-Time",
+    "mode": "In-office"
   },
   {
     "id": 8,
     "title": "Mobile App Developer",
     "company": "AppVantage",
-    "location": "Remote"
+    "location": "Remote",
+    "salary": "₹6,00,000 - ₹10,00,000",
+    "type": "Full-Time",
+    "mode": "Remote"
   },
   {
     "id": 9,
     "title": "QA Engineer",
     "company": "QualityFirst",
-    "location": "Chicago"
+    "location": "Chicago",
+    "salary": "₹7,00,000 - ₹11,00,000",
+    "type": "Full-Time",
+    "mode": "In-office"
   },
   {
     "id": 10,
     "title": "Technical Writer",
     "company": "DocuPro",
-    "location": "Remote"
+    "location": "Remote",
+    "salary": "₹3,00,000 - ₹5,00,000",
+    "type": "Part-Time",
+    "mode": "Remote"
   },
   {
     "id": 11,
     "title": "System Administrator",
     "company": "NetSecure",
-    "location": "San Jose"
+    "location": "San Jose",
+    "salary": "₹6,50,000 - ₹9,50,000",
+    "type": "Full-Time",
+    "mode": "Hybrid"
   },
   {
     "id": 12,
     "title": "AI Researcher",
     "company": "NextGen AI",
-    "location": "Boston"
+    "location": "Boston",
+    "salary": "₹12,00,000 - ₹20,00,000",
+    "type": "Full-Time",
+    "mode": "In-office"
   },
   {
     "id": 13,
     "title": "Marketing Specialist",
     "company": "BrandWave",
-    "location": "Los Angeles"
+    "location": "Los Angeles",
+    "salary": "₹4,00,000 - ₹8,00,000",
+    "type": "Part-Time",
+    "mode": "Remote"
   },
   {
     "id": 14,
     "title": "Customer Support Specialist",
     "company": "HelpDesk Pro",
-    "location": "Remote"
+    "location": "Remote",
+    "salary": "₹2,50,000 - ₹4,00,000",
+    "type": "Full-Time",
+    "mode": "Remote"
   },
   {
     "id": 15,
     "title": "Network Engineer",
     "company": "Connectix",
-    "location": "Dallas"
+    "location": "Dallas",
+    "salary": "₹6,00,000 - ₹10,00,000",
+    "type": "Full-Time",
+    "mode": "In-office"
   }
 ]

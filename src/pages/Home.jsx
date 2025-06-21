@@ -6,10 +6,10 @@ const Home = () => {
 
   return (
     <div
-      className="flex-grow flex items-center justify-center px-4 py-12"
+      className="flex-grow flex items-center justify-center px-3 py-10"
       style={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #6b8dd6 100%)',
-        minHeight: '84vh',
+        minHeight: '80vh',
       }}
     >
       <div className="bg-white bg-opacity-90 backdrop-blur-md shadow-xl rounded-xl p-10 md:p-16 max-w-4xl w-full text-center">

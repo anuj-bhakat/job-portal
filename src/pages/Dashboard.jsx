@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import JobSearch from '../components/JobSearch';
+import AddJob from '../components/AddJob';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('stats');
   const [user, setUser] = useState(null);
-  const [appliedJobs, setAppliedJobs] = useState([]);
-
-  // Profile edit states
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState('');
-
-  // Password change states
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [appliedJobs, setAppliedJobs] = useState([]); // Move appliedJobs state here
+  const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -25,109 +17,70 @@ const Dashboard = () => {
       navigate('/login');
     } else {
       setUser(loggedInUser);
-      setEditName(loggedInUser.name);
     }
 
+    // Fetch saved applied jobs from localStorage
     const savedAppliedJobs = localStorage.getItem('appliedJobs');
     if (savedAppliedJobs) {
       setAppliedJobs(JSON.parse(savedAppliedJobs));
     }
+
+    fetch('/data/jobs.json')
+      .then((res) => res.json())
+      .then((data) => setJobs(data))
+      .catch((err) => console.error('Failed to load jobs:', err));
   }, [navigate]);
 
-  const handleSaveProfile = () => {
-    if (!editName.trim()) {
-      alert('Name cannot be empty.');
-      return;
+  const tabs = [
+    { key: 'stats', label: 'Stats' },
+    { key: 'jobs', label: 'Jobs' },
+    { key: 'add-job', label: 'Add a Job' },
+  ];
+
+  // Get the applied job details (titles, companies, and locations)
+  const appliedJobDetails = appliedJobs
+    .map((jobId) => {
+      return jobs.find((job) => job.id === jobId);
+    })
+    .filter(Boolean); // Only include valid jobs
+
+  // Group jobs by role and company for better presentation
+  const roles = appliedJobDetails.reduce((acc, job) => {
+    const { title, company } = job;
+
+    if (!acc[company]) {
+      acc[company] = [];
     }
+    acc[company].push(title);
 
-    const updatedUser = { ...user, name: editName.trim() };
-    setUser(updatedUser);
-    localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-    setIsEditing(false);
-    alert('Profile updated successfully!');
-  };
-
-  const handleCancelEdit = () => {
-    setEditName(user.name);
-    setIsEditing(false);
-  };
-
-  const handleChangePassword = () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      alert('Please fill in all password fields.');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      alert('New password and confirmation do not match.');
-      return;
-    }
-
-    if (user.password && currentPassword !== user.password) {
-      alert('Current password is incorrect.');
-      return;
-    }
-
-    const updatedUser = { ...user, password: newPassword };
-    setUser(updatedUser);
-    localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    setIsChangingPassword(false);
-
-    alert('Password changed successfully!');
-  };
-
-  const handleCancelPasswordChange = () => {
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    setIsChangingPassword(false);
-  };
+    return acc;
+  }, {});
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-blue-50 via-blue-100 to-blue-200 p-8 flex flex-col">
-      {/* Dashboard Header */}
-      <header className="bg-white shadow-md rounded-xl p-6 flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-        <h1 className="text-3xl font-extrabold text-blue-700 mb-4 md:mb-0">
+      <header className="bg-white shadow-md rounded-xl p-6 flex items-center relative mb-8">
+        <h1 className="text-3xl font-extrabold text-blue-700 whitespace-nowrap">
           Welcome, <span className="text-blue-600">{user?.name}</span>
         </h1>
-        <button
-          onClick={() => {
-            localStorage.removeItem('loggedInUser');
-            navigate('/login');
-          }}
-          className="text-sm md:text-base bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition shadow-md"
-          aria-label="Logout"
-        >
-          Logout
-        </button>
+
+        <nav className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex rounded-xl overflow-hidden border border-blue-300 shadow-sm">
+          {tabs.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`px-7 py-3 text-lg font-semibold transition-colors duration-300 focus:outline-none whitespace-nowrap ${
+                activeTab === key
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'text-blue-700 hover:bg-blue-100'
+              }`}
+              aria-current={activeTab === key ? 'page' : undefined}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
       </header>
 
-      {/* Navigation Tabs */}
-      <nav className="bg-white rounded-xl shadow-md flex mb-8 overflow-hidden w-1/2 mx-auto">
-        {['stats', 'search', 'profile'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => {
-              setActiveTab(tab);
-              setIsEditing(false);
-              setIsChangingPassword(false);
-            }}
-            className={`flex-1 py-4 text-center font-semibold transition-colors duration-300 focus:outline-none ${
-              activeTab === tab
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'text-blue-700 hover:bg-blue-100'
-            }`}
-            aria-current={activeTab === tab ? 'page' : undefined}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </nav>
-
-      {/* Content Area */}
       <section className="bg-white rounded-xl shadow-md p-8 max-w-6xl mx-auto w-full flex-grow">
         {activeTab === 'stats' && (
           <div>
@@ -135,7 +88,7 @@ const Dashboard = () => {
             <p className="text-gray-700 mb-6">
               Track your job application progress here. Stay motivated and organized!
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-blue-100 p-6 rounded-xl text-center shadow-sm transition transform hover:scale-[1.02]">
                 <p className="text-4xl font-extrabold text-blue-700">{appliedJobs.length}</p>
                 <p className="text-blue-800 mt-2 font-semibold">Applications Sent</p>
@@ -144,146 +97,47 @@ const Dashboard = () => {
                 <p className="text-4xl font-extrabold text-purple-700">
                   {appliedJobs.length > 0 ? 'Active' : 'None'}
                 </p>
-                <p className="text-purple-800 mt-2 font-semibold">Applications Status</p>
+                <p className="text-purple-800 mt-2 font-semibold">Application Status</p>
               </div>
+            </div>
+
+            {/* Applied Jobs Overview */}
+            <div className="mt-8">
+              <h3 className="text-xl font-semibold text-blue-700 mb-4">Applied Jobs Overview</h3>
+              {Object.keys(roles).length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {Object.keys(roles).map((company) => (
+                    <div
+                      key={company}
+                      className="bg-gradient-to-r from-blue-200 to-blue-300 text-gray-800 p-6 rounded-lg text-center shadow-lg hover:scale-[1.03] transition-transform"
+                    >
+                      <h4 className="text-xl font-semibold text-gray-800 mb-4">{company}</h4>
+                      <div className="flex justify-center items-center mb-4">
+                        <span className="text-2xl mr-2">🏢</span>
+                        <span className="text-2xl font-bold">{roles[company].length}</span>
+                      </div>
+                      <ul className="list-disc pl-6 text-gray-600 text-left space-y-2">
+                        {roles[company].map((role, index) => (
+                          <li key={index} className="text-sm font-semibold text-blue-700">
+                            {role}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">You haven't applied to any jobs yet.</p>
+              )}
             </div>
           </div>
         )}
 
-        {activeTab === 'search' && <JobSearch />}
-
-        {activeTab === 'profile' && user && (
-          <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-8 text-center text-blue-700">Your Profile</h2>
-
-            {/* Profile View */}
-            {!isChangingPassword && !isEditing && (
-              <>
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-gray-600 text-sm font-semibold mb-2">Name:</label>
-                    <input
-                      type="text"
-                      value={user.name}
-                      readOnly
-                      className="w-full px-5 py-3 border rounded-lg bg-gray-100 cursor-not-allowed text-gray-700"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 text-sm font-semibold mb-2">Email:</label>
-                    <input
-                      type="email"
-                      value={user.email}
-                      readOnly
-                      className="w-full px-5 py-3 border rounded-lg bg-gray-100 cursor-not-allowed text-gray-700"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-8 flex justify-center space-x-6">
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-                  >
-                    Edit Name
-                  </button>
-                  <button
-                    onClick={() => setIsChangingPassword(true)}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-                  >
-                    Change Password
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* Edit Name */}
-            {!isChangingPassword && isEditing && (
-              <>
-                <div>
-                  <label className="block text-gray-700 text-sm font-semibold mb-2">Edit Name:</label>
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-blue-400 text-gray-800"
-                    autoFocus
-                  />
-                </div>
-
-                <div className="mt-8 flex justify-center space-x-6">
-                  <button
-                    onClick={handleSaveProfile}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancelEdit}
-                    className="bg-gray-400 hover:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* Change Password */}
-            {isChangingPassword && (
-              <div className="p-6 border rounded-xl bg-yellow-50 shadow-inner max-w-md mx-auto">
-                <h3 className="text-xl font-semibold mb-6 text-center text-yellow-700">Change Password</h3>
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-yellow-800 text-sm mb-1 font-medium">Current Password:</label>
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-yellow-400 text-yellow-900"
-                      autoComplete="current-password"
-                      autoFocus
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-yellow-800 text-sm mb-1 font-medium">New Password:</label>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-yellow-400 text-yellow-900"
-                      autoComplete="new-password"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-yellow-800 text-sm mb-1 font-medium">Confirm New Password:</label>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full px-5 py-3 border rounded-lg focus:outline-none focus:ring-3 focus:ring-yellow-400 text-yellow-900"
-                      autoComplete="new-password"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-8 flex justify-center space-x-6">
-                  <button
-                    onClick={handleChangePassword}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-                  >
-                    Update Password
-                  </button>
-                  <button
-                    onClick={handleCancelPasswordChange}
-                    className="bg-gray-400 hover:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+        {activeTab === 'jobs' && (
+          <JobSearch jobs={jobs} appliedJobs={appliedJobs} setAppliedJobs={setAppliedJobs} />
         )}
+
+        {activeTab === 'add-job' && <AddJob jobs={jobs} setJobs={setJobs} />}
       </section>
     </div>
   );
